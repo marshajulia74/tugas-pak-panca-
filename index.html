@@ -1,785 +1,118 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoring Kualitas Udara - RS Sejahtera</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e8f4f8 0%, #f0f8ff 100%);
-            min-height: 100vh;
-            color: #2c3e50;
-        }
-
-        .hospital-header {
-            background: linear-gradient(135deg, #1e88e5 0%, #0d47a1 100%);
-            color: white;
-            padding: 25px 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 25px;
-        }
-
-        .hospital-logo {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .logo-icon {
-            font-size: 3em;
-            color: white;
-        }
-
-        .hospital-info h1 {
-            font-size: 2.2em;
-            margin-bottom: 8px;
-            font-weight: 300;
-            letter-spacing: 1px;
-        }
-
-        .hospital-info p {
-            font-size: 1.1em;
-            opacity: 0.9;
-            font-weight: 300;
-        }
-
-        .emergency-contact {
-            text-align: right;
-            background: rgba(255,255,255,0.2);
-            padding: 15px 20px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        .emergency-contact div {
-            font-size: 1.3em;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 25px;
-        }
-
-        .status-alert {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            border-left: 8px solid #4caf50;
-            transition: all 0.3s ease;
-        }
-
-        .status-alert.warning {
-            border-left-color: #ff9800;
-            background: linear-gradient(135deg, #fff3e0 0%, #ffecb3 100%);
-        }
-
-        .status-alert.danger {
-            border-left-color: #f44336;
-            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-
-        .alert-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .alert-icon {
-            font-size: 4em;
-            margin-right: 25px;
-            color: #1e88e5;
-        }
-
-        .alert-text h2 {
-            font-size: 1.8em;
-            margin-bottom: 10px;
-            color: #2c3e50;
-            font-weight: 500;
-        }
-
-        .alert-text p {
-            color: #666;
-            font-size: 1.2em;
-            line-height: 1.5;
-        }
-
-        .alert-status {
-            font-size: 1.5em;
-            font-weight: bold;
-            padding: 15px 25px;
-            border-radius: 10px;
-            background: #4caf50;
-            color: white;
-        }
-
-        .alert-status.warning {
-            background: #ff9800;
-        }
-
-        .alert-status.danger {
-            background: #f44336;
-        }
-
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        @media (max-width: 968px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-            
-            .header-content {
-                flex-direction: column;
-                text-align: center;
-                gap: 20px;
-            }
-            
-            .emergency-contact {
-                text-align: center;
-            }
-        }
-
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #e3f2fd;
-        }
-
-        .card-header i {
-            font-size: 2em;
-            margin-right: 15px;
-            color: #1e88e5;
-        }
-
-        .card-header h3 {
-            font-size: 1.5em;
-            color: #2c3e50;
-            font-weight: 500;
-        }
-
-        .sensor-reading {
-            text-align: center;
-            margin: 25px 0;
-        }
-
-        .sensor-value {
-            font-size: 4em;
-            font-weight: bold;
-            color: #1e88e5;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .sensor-unit {
-            font-size: 1.3em;
-            color: #666;
-            font-weight: 500;
-        }
-
-        .progress-container {
-            background: #e0e0e0;
-            border-radius: 15px;
-            height: 25px;
-            margin: 25px 0;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #4caf50, #66bb6a);
-            border-radius: 15px;
-            transition: width 0.5s ease;
-            width: 0%;
-        }
-
-        .progress-bar.warning {
-            background: linear-gradient(90deg, #ff9800, #ffb74d);
-        }
-
-        .progress-bar.danger {
-            background: linear-gradient(90deg, #f44336, #ef5350);
-        }
-
-        .threshold-line {
-            position: absolute;
-            top: 0;
-            height: 100%;
-            width: 3px;
-            background: #2c3e50;
-            transform: translateX(-50%);
-        }
-
-        .threshold-info {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            font-size: 1em;
-            color: #666;
-            font-weight: 500;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 25px;
-        }
-
-        .info-item {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid #e9ecef;
-        }
-
-        .info-label {
-            font-size: 0.95em;
-            color: #666;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .info-value {
-            font-size: 1.4em;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-
-        .info-value.danger {
-            color: #f44336;
-        }
-
-        .info-value.safe {
-            color: #4caf50;
-        }
-
-        .control-panel {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 25px;
-            margin-top: 20px;
-        }
-
-        .control-group {
-            margin-bottom: 25px;
-        }
-
-        .control-label {
-            display: block;
-            margin-bottom: 12px;
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 1.1em;
-        }
-
-        .slider-container {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .slider {
-            flex: 1;
-            -webkit-appearance: none;
-            height: 10px;
-            border-radius: 5px;
-            background: #e0e0e0;
-            outline: none;
-        }
-
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #1e88e5;
-            cursor: pointer;
-            border: 3px solid white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-
-        .threshold-value {
-            font-weight: bold;
-            color: #1e88e5;
-            font-size: 1.3em;
-            min-width: 70px;
-            text-align: center;
-        }
-
-        .button-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 25px;
-        }
-
-        .btn {
-            padding: 16px 24px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-primary {
-            background: #1e88e5;
-            color: white;
-        }
-
-        .btn-success {
-            background: #4caf50;
-            color: white;
-        }
-
-        .btn-warning {
-            background: #ff9800;
-            color: white;
-        }
-
-        .btn-danger {
-            background: #f44336;
-            color: white;
-        }
-
-        .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .medical-info {
-            margin-top: 20px;
-        }
-
-        .protocol-box {
-            background: #e8f5e8;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            border-left: 5px solid #4caf50;
-        }
-
-        .protocol-box h4 {
-            color: #2e7d32;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .emergency-box {
-            background: #fff3e0;
-            padding: 20px;
-            border-radius: 12px;
-            border-left: 5px solid #ff9800;
-        }
-
-        .emergency-box h4 {
-            color: #ef6c00;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .emergency-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .emergency-list li {
-            padding: 8px 0;
-            color: #555;
-            line-height: 1.5;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .emergency-list li:before {
-            content: "•";
-            color: #ef6c00;
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-
-        .last-update {
-            text-align: center;
-            margin-top: 30px;
-            font-style: italic;
-            color: #666;
-            font-size: 1.1em;
-            padding: 15px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .medical-footer {
-            background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
-            color: white;
-            text-align: center;
-            padding: 30px;
-            margin-top: 50px;
-            border-radius: 20px 20px 0 0;
-        }
-
-        .medical-footer p {
-            margin: 5px 0;
-            opacity: 0.9;
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monitoring Kualitas Udara RS</title>
+<style>
+body {font-family: Arial; background:#f0f8ff; margin:0; padding:0;}
+header {background:#2c3e50; color:white; padding:15px; text-align:center;}
+.container {max-width:900px; margin:20px auto; padding:10px;}
+.card {background:white; border-radius:10px; box-shadow:0 3px 10px rgba(0,0,0,0.1); padding:20px; margin-bottom:20px;}
+.progress-container {background:#eee; border-radius:10px; height:25px; position:relative; margin:10px 0;}
+.progress-bar {height:100%; width:0%; background:#4caf50; border-radius:10px; transition:0.3s;}
+.threshold-line {position:absolute; width:3px; height:100%; background:#000; top:0; left:0;}
+button {padding:10px 15px; margin-right:10px; cursor:pointer;}
+button.on{background:#4caf50;color:white;} button.off{background:#f44336;color:white;}
+</style>
 </head>
 <body>
-    <header class="hospital-header">
-        <div class="header-content">
-            <div class="hospital-logo">
-                <i class="fas fa-hospital logo-icon"></i>
-                <div class="hospital-info">
-                    <h1>RUMAH SAKIT SEJAHTERA</h1>
-                    <p>Unit Monitoring Kualitas Udara & Deteksi Asap</p>
-                </div>
-            </div>
-            <div class="emergency-contact">
-                <div><i class="fas fa-phone"></i> 024-123456</div>
-                <p>Emergency 24/7</p>
-            </div>
-        </div>
-    </header>
 
-    <div class="container">
-        <div class="status-alert" id="statusAlert">
-            <div class="alert-content">
-                <div class="alert-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <div class="alert-text">
-                    <h2>Sistem Monitoring Kualitas Udara Aktif</h2>
-                    <p>Memantau konsentrasi gas dan asap di lingkungan rumah sakit secara real-time</p>
-                </div>
-                <div class="alert-status" id="alertStatus">
-                    STATUS AMAN
-                </div>
-            </div>
-        </div>
+<header>
+<h1>RS Sejahtera - Monitoring Asap</h1>
+<p>Unit Keamanan Rumah Sakit</p>
+</header>
 
-        <div class="dashboard">
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-wind"></i>
-                    <h3>Monitoring Kualitas Udara</h3>
-                </div>
-                <div class="sensor-reading">
-                    <div class="sensor-value" id="sensorValue">0</div>
-                    <div class="sensor-unit">Nilai Sensor MQ-2</div>
-                </div>
-                
-                <div class="progress-container">
-                    <div class="progress-bar" id="progressBar"></div>
-                    <div class="threshold-line" id="thresholdLine"></div>
-                </div>
-                
-                <div class="threshold-info">
-                    <span>0</span>
-                    <span id="thresholdDisplay">Batas Aman: 2500</span>
-                    <span>4095</span>
-                </div>
+<div class="container">
+<div class="card">
+<h2>Status Sensor</h2>
+<p>Nilai Sensor: <span id="sensorValue">0</span></p>
+<div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="threshold-line" id="thresholdLine"></div>
+</div>
+<p>Status: <span id="statusText">AMAN</span></p>
+<p>Buzzer: <span id="buzzerText">OFF</span></p>
+</div>
 
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="info-label">Status Sistem</div>
-                        <div class="info-value safe" id="statusValue">AMAN</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Alarm Buzzer</div>
-                        <div class="info-value" id="buzzerStatus">OFF</div>
-                    </div>
-                </div>
-            </div>
+<div class="card">
+<h2>Kontrol</h2>
+<label>Threshold: <span id="thresholdValue">2500</span></label><br>
+<input type="range" min="500" max="4000" value="2500" id="thresholdSlider" style="width:100%; margin:10px 0;">
+<button class="on" onclick="buzzerManual('on')">Buzzer ON</button>
+<button class="off" onclick="buzzerManual('off')">Buzzer OFF</button>
+<button class="on" onclick="saveThreshold()">Simpan Threshold</button>
+</div>
 
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-sliders-h"></i>
-                    <h3>Kontrol & Pengaturan</h3>
-                </div>
-                
-                <div class="control-panel">
-                    <div class="control-group">
-                        <label class="control-label">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            Batas Threshold Deteksi
-                        </label>
-                        <div class="slider-container">
-                            <input type="range" min="500" max="4000" value="2500" 
-                                   class="slider" id="thresholdSlider">
-                            <span class="threshold-value" id="thresholdValue">2500</span>
-                        </div>
-                    </div>
+<div class="card">
+<h2>Info</h2>
+<p>Terakhir Update: <span id="lastUpdate">-</span></p>
+<p>Status Koneksi: <span id="connStatus">📶</span></p>
+</div>
+</div>
 
-                    <div class="button-group">
-                        <button class="btn btn-primary" onclick="testBuzzer()">
-                            <i class="fas fa-bell"></i>
-                            Test Alarm
-                        </button>
-                        <button class="btn btn-success" onclick="updateThreshold()">
-                            <i class="fas fa-save"></i>
-                            Simpan Threshold
-                        </button>
-                        <button class="btn btn-warning" onclick="manualBuzzer('on')">
-                            <i class="fas fa-play"></i>
-                            Buzzer ON
-                        </button>
-                        <button class="btn btn-danger" onclick="manualBuzzer('off')">
-                            <i class="fas fa-stop"></i>
-                            Buzzer OFF
-                        </button>
-                    </div>
-                </div>
+<script>
+const sensorValue = document.getElementById("sensorValue");
+const statusText = document.getElementById("statusText");
+const buzzerText = document.getElementById("buzzerText");
+const progressBar = document.getElementById("progressBar");
+const thresholdLine = document.getElementById("thresholdLine");
+const thresholdSlider = document.getElementById("thresholdSlider");
+const thresholdValue = document.getElementById("thresholdValue");
+const lastUpdate = document.getElementById("lastUpdate");
 
-                <div class="medical-info">
-                    <div class="protocol-box">
-                        <h4>
-                            <i class="fas fa-stethoscope"></i> Protokol Keamanan
-                        </h4>
-                        <p style="color: #555; line-height: 1.6;">
-                            Sistem monitoring ini bertujuan mendeteksi dini keberadaan gas dan asap 
-                            berbahaya di lingkungan rumah sakit untuk mencegah risiko kesehatan 
-                            pasien dan petugas medis.
-                        </p>
-                    </div>
-                    
-                    <div class="emergency-box">
-                        <h4>
-                            <i class="fas fa-first-aid"></i> Tindakan Darurat
-                        </h4>
-                        <ul class="emergency-list">
-                            <li>Evakuasi area segera jika alarm berbunyi</li>
-                            <li>Gunakan masker pelindung jika tersedia</li>
-                            <li>Hubungi tim darurat rumah sakit</li>
-                            <li>Ikuti instruksi petugas evakuasi</li>
-                            <li>Jauhi sumber gas/asap yang terdeteksi</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
+thresholdSlider.addEventListener('input', ()=>thresholdValue.textContent = thresholdSlider.value);
 
-        <div class="last-update">
-            <i class="fas fa-sync-alt"></i>
-            Pembaruan Terakhir: <span id="lastUpdate">-</span>
-        </div>
-    </div>
+async function fetchSensor(){
+    try{
+        const res = await fetch("/api/sensor");
+        const data = await res.json();
+        sensorValue.textContent = data.value;
+        buzzerText.textContent = data.buzzer_active?"AKTIF":"OFF";
 
-    <footer class="medical-footer">
-        <p>&copy; 2024 Rumah Sakit Sejahtera - Sistem Monitoring Kualitas Udara</p>
-        <p>Dikelola oleh Tim Engineering & Keselamatan RS Sejahtera | Monitoring 24 Jam</p>
-    </footer>
+        const prog = (data.value/4095)*100;
+        progressBar.style.width = prog+"%";
+        thresholdLine.style.left = (data.threshold/4095)*100+"%";
 
-    <script>
-        function updateDashboard() {
-            fetch('/api/sensor')
-                .then(response => response.json())
-                .then(data => {
-                    // Update nilai sensor
-                    document.getElementById('sensorValue').textContent = data.value;
-                    
-                    // Update progress bar
-                    const progressBar = document.getElementById('progressBar');
-                    const percentage = (data.value / 4095) * 100;
-                    progressBar.style.width = percentage + '%';
-                    
-                    // Update threshold line
-                    const thresholdLine = document.getElementById('thresholdLine');
-                    const thresholdPercentage = (data.threshold / 4095) * 100;
-                    thresholdLine.style.left = thresholdPercentage + '%';
-                    
-                    // Update status berdasarkan kondisi
-                    const statusAlert = document.getElementById('statusAlert');
-                    const alertStatus = document.getElementById('alertStatus');
-                    const statusValue = document.getElementById('statusValue');
-                    
-                    if (data.value > data.threshold) {
-                        // Kondisi BAHAYA
-                        statusAlert.className = 'status-alert danger';
-                        alertStatus.className = 'alert-status danger';
-                        alertStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> BAHAYA';
-                        statusValue.textContent = 'BAHAYA';
-                        statusValue.className = 'info-value danger';
-                        progressBar.className = 'progress-bar danger';
-                    } else if (data.value > data.threshold * 0.7) {
-                        // Kondisi WASPADA
-                        statusAlert.className = 'status-alert warning';
-                        alertStatus.className = 'alert-status warning';
-                        alertStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> WASPADA';
-                        statusValue.textContent = 'WASPADA';
-                        statusValue.className = 'info-value';
-                        progressBar.className = 'progress-bar warning';
-                    } else {
-                        // Kondisi AMAN
-                        statusAlert.className = 'status-alert';
-                        alertStatus.className = 'alert-status';
-                        alertStatus.innerHTML = '<i class="fas fa-check-circle"></i> AMAN';
-                        statusValue.textContent = 'AMAN';
-                        statusValue.className = 'info-value safe';
-                        progressBar.className = 'progress-bar';
-                    }
-                    
-                    // Update status buzzer
-                    const buzzerStatus = document.getElementById('buzzerStatus');
-                    buzzerStatus.textContent = data.buzzer_active ? 'AKTIF' : 'OFF';
-                    buzzerStatus.className = data.buzzer_active ? 'info-value danger' : 'info-value';
-                    
-                    // Update tampilan threshold
-                    document.getElementById('thresholdDisplay').textContent = 
-                        `Batas Aman: ${data.threshold}`;
-                    
-                    // Update waktu terakhir
-                    document.getElementById('lastUpdate').textContent = 
-                        new Date().toLocaleTimeString('id-ID');
-                })
-                .catch(error => {
-                    console.error('Error mengambil data sensor:', error);
-                    document.getElementById('statusValue').textContent = 'ERROR';
-                    document.getElementById('statusValue').className = 'info-value danger';
-                });
+        if(data.value > data.threshold){
+            statusText.textContent="BAHAYA!";
+            statusText.style.color="#f44336"; progressBar.style.background="#f44336";
+        }else if(data.value>data.threshold*0.7){
+            statusText.textContent="WASPADA";
+            statusText.style.color="#ff9800"; progressBar.style.background="#ff9800";
+        }else{
+            statusText.textContent="AMAN";
+            statusText.style.color="#4caf50"; progressBar.style.background="#4caf50";
         }
+        lastUpdate.textContent = new Date().toLocaleTimeString("id-ID");
+        document.getElementById("connStatus").textContent="📶 Terhubung";
+        document.getElementById("connStatus").style.color="#4caf50";
+    }catch(e){
+        document.getElementById("connStatus").textContent="❌ Terputus";
+        document.getElementById("connStatus").style.color="#f44336";
+    }
+}
 
-        function updateThreshold() {
-            const newThreshold = document.getElementById('thresholdSlider').value;
-            
-            fetch('/api/threshold', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ threshold: parseInt(newThreshold) })
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert('Threshold berhasil diupdate menjadi: ' + data.threshold);
-                updateDashboard();
-            })
-            .catch(error => {
-                alert('Gagal mengupdate threshold');
-                console.error('Error:', error);
-            });
-        }
+setInterval(fetchSensor, 1000);
 
-        function testBuzzer() {
-            fetch('/api/buzzer', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ action: 'on' })
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert('Test alarm berhasil dijalankan');
-                
-                // Otomatis matikan buzzer setelah 2 detik
-                setTimeout(() => {
-                    fetch('/api/buzzer', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ action: 'off' })
-                    });
-                }, 2000);
-            })
-            .catch(error => {
-                alert('Gagal menjalankan test alarm');
-                console.error('Error:', error);
-            });
-        }
+async function buzzerManual(action){
+    await fetch("/api/buzzer", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({action})
+    });
+    fetchSensor();
+}
 
-        function manualBuzzer(action) {
-            fetch('/api/buzzer', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ action: action })
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(`Buzzer berhasil ${action === 'on' ? 'diaktifkan' : 'dimatikan'}`);
-                updateDashboard();
-            })
-            .catch(error => {
-                alert(`Gagal ${action === 'on' ? 'mengaktifkan' : 'mematikan'} buzzer`);
-                console.error('Error:', error);
-            });
-        }
+async function saveThreshold(){
+    const thr = parseInt(thresholdSlider.value);
+    await fetch("/api/threshold", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({threshold:thr})
+    });
+}
+</script>
 
-        // Inisialisasi saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', function() {
-            // Setup slider
-            document.getElementById('thresholdSlider').addEventListener('input', function() {
-                document.getElementById('thresholdValue').textContent = this.value;
-            });
-            
-            // Mulai update dashboard
-            updateDashboard();
-            setInterval(updateDashboard, 2000); // Update setiap 2 detik
-        });
-    </script>
 </body>
 </html>
